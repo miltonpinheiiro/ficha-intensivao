@@ -1,6 +1,6 @@
 // Mantém o app funcionando sem internet (academia sem sinal).
 // Ao publicar uma nova versão, aumente o número abaixo para o celular baixar a atualização.
-const CACHE = 'ficha-intensivao-v1';
+const CACHE = 'ficha-intensivao-v2';
 const FONTS = 'ficha-intensivao-fontes';
 const SHELL = [
   './',
