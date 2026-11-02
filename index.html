@@ -153,7 +153,15 @@ main > section, main > article{min-width:0}
 .box{flex:none;width:26px;height:26px;border-radius:7px;border:1.5px solid var(--line);display:grid;place-items:center;font-size:15px;font-weight:700;color:transparent;margin-top:1px}
 .tog[aria-pressed="true"] .box{background:var(--good);border-color:var(--good);color:var(--on-good)}
 .tog[aria-pressed="true"] .tog-t b{text-decoration:line-through;text-decoration-color:var(--muted)}
-.comp{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:14px 16px;border-top:1px solid var(--line)}
+.comp{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:14px 16px;border-top:1px solid var(--line)}
+.comp-tip{margin:4px 0 0;font-size:14px;color:var(--muted)}
+.how.sm{margin-top:6px;font-size:13px}
+.grp{margin:0;padding:14px 16px 4px;border-top:1px solid var(--line);font:600 11px/1.2 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.grp.first{padding-top:2px;border-top:0}
+.grp-note{margin:0;padding:0 16px 10px;font-size:14px;color:var(--muted)}
+.maqs{display:flex;gap:6px;flex-wrap:wrap;padding:8px 16px 14px}
+.maq{padding:9px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font:700 14px var(--f-body);color:var(--ink)}
+.maq[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .comp-t{display:grid;gap:2px;min-width:0}
 .comp-t small{font:500 13px var(--f-mono);color:var(--muted)}
 .dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;flex:none;max-width:60%}
@@ -373,20 +381,51 @@ const W={
   {id:'r3',n:'Rosca alternada',s:3,r:'12',d:60,t:'A 3ª série é só do braço esquerdo.',uni:1},
   {id:'r4',n:'Tríceps acima da cabeça',s:3,r:'12',d:60,t:'A 3ª série é só do braço esquerdo.',uni:1}]}
 };
+const MAQ={
+ escada:{n:'Escada',liss:'ritmo constante em que você ainda fala frases curtas',forte:'subindo rápido',leve:'ritmo leve',dica:'Mãos só encostadas no corrimão: apoiar o peso tira boa parte do esforço. Tronco quase reto.'},
+ bike:{n:'Bicicleta',liss:'80–90 rpm com carga moderada',forte:'carga alta, girando o mais rápido possível',leve:'carga leve, giro solto',dica:'Banco na altura do quadril, com o joelho quase estendido embaixo. É o cardio que menos atrapalha o treino de perna.'},
+ esteira:{n:'Esteira',liss:'caminhada a 8–12% de inclinação, 5–5,5 km/h',forte:'caminhada rápida a 12–15% de inclinação, 6–6,5 km/h',leve:'plano, 4,5 km/h',dica:'Caminhe sem segurar no apoio. Prefira caminhada inclinada à corrida: correr tende a atrapalhar mais o ganho de músculo.'},
+ eliptico:{n:'Elíptico',liss:'resistência média, braços ativos',forte:'resistência alta, passada rápida',leve:'resistência baixa',dica:'Sem impacto: boa escolha quando joelho ou quadril estiverem cansados.'},
+ remo:{n:'Remo',liss:'20–22 remadas por minuto, ritmo leve',forte:'remada forte, 28–32 por minuto',leve:'remada leve, 18–20 por minuto',dica:'Empurre primeiro com as pernas, depois puxe com os braços. Também trabalha as costas.'}
+};
+const MAQ_ORD=['escada','bike','esteira','eliptico','remo'];
+const AB={
+ cabo:{n:'Abdominal no cabo, ajoelhado',r:'12–15',t:'Enrole a coluna levando os cotovelos aos joelhos, com o quadril parado. Suba a carga como em qualquer exercício.'},
+ suspenso:{n:'Elevação de pernas suspenso',r:'10–15',t:'Enrole o quadril para cima, sem balançar. Joelhos dobrados deixam mais fácil.'},
+ lateral:{n:'Prancha lateral',r:'30–45 s cada lado',t:'Corpo em linha reta, quadril alto.'},
+ deadbug:{n:'Dead bug',r:'10 cada lado',t:'Lombar colada no chão o tempo todo; estenda devagar o braço e a perna opostos.'},
+ roda:{n:'Rollout com roda abdominal',r:'8–12',t:'Vá só até onde a lombar não afunda. Sem roda, use uma barra com anilhas.'},
+ infra:{n:'Abdominal infra no banco (reverse crunch)',r:'12–15',t:'Tire o quadril do banco enrolando a pelve; desça em 2–3 s.'},
+ pallof:{n:'Pallof press',r:'12 cada lado',t:'Cabo na altura do peito; empurre e segure 2 s sem deixar o tronco girar.'},
+ maquina:{n:'Abdominal na máquina',r:'12–15',t:'Pausa de 1 s embaixo e em cima, com carga que leve perto da falha.'},
+ capitao:{n:'Elevação de joelhos na paralela',r:'12–15',t:'Costas apoiadas; leve os joelhos ao peito enrolando o quadril.'},
+ hollow:{n:'Hollow hold (canoa)',r:'20–30 s',t:'Lombar no chão, braços e pernas estendidos e fora do chão.'},
+ lenhador:{n:'Lenhador no cabo (woodchopper)',r:'12 cada lado',t:'Puxe o cabo na diagonal, de cima para baixo, girando o tronco com os braços quase retos.'},
+ declinado:{n:'Abdominal declinado com anilha',r:'10–15',t:'Anilha no peito; suba enrolando a coluna e desça devagar.'},
+ bicicleta:{n:'Abdominal bicicleta',r:'20 (10 cada lado)',t:'Leve o cotovelo ao joelho oposto, sem puxar o pescoço.'},
+ suitcase:{n:'Caminhada com 1 halter (suitcase carry)',r:'30 m cada lado',t:'Halter pesado em uma mão só; tronco reto, sem inclinar para o lado.'},
+ vacuo:{n:'Vácuo abdominal',r:'20 s',t:'Solte todo o ar e puxe o umbigo para dentro e para cima. Treina o músculo que segura a barriga.'},
+ prancha:{n:'Prancha',r:'45–60 s',t:'Glúteo contraído e quadril alinhado com os ombros.'},
+ escalador:{n:'Escalador (mountain climber)',r:'30 s',t:'Joelhos ao peito alternando, com o quadril baixo e firme.'}
+};
+const ABS={
+ 2:{A:[['cabo',3],['suspenso',3],['lateral',3],['deadbug',2]],B:[['maquina',3],['capitao',3],['hollow',3],['lenhador',2]]},
+ 5:{A:[['roda',3],['infra',3],['pallof',3],['vacuo',5]],B:[['declinado',3],['bicicleta',3],['suitcase',3],['vacuo',5]]}
+};
+const FIN={1:[['prancha',2],['infra',2]],3:[['escalador',3],['deadbug',2]],6:[['suspenso',2],['lateral',2]]};
 const N={
- 1:{tt:'LISS + deltoide lateral + antebraço',c1:'Bike ou elíptico · LISS 40 min',c2:'Bike ou elíptico · LISS 25–30 min',comp:[
+ 1:{tt:'LISS + deltoide lateral + antebraço + core',tipo:'liss',min:'40',maq:'escada',comp:[
    {id:'n1a',n:'Elevação lateral com halteres',s:3,r:'15–20'},{id:'n1b',n:'Rosca de punho',s:3,r:'15–20'},{id:'n1c',n:'Rosca de punho inversa',s:2,r:'15–20'}]},
- 2:{tt:'Caminhada inclinada + abdômen',c1:'Esteira inclinada 8–12%, 5–5,5 km/h · 40 min',c2:'Esteira inclinada 8–12%, 5–5,5 km/h · 25–30 min',comp:[
-   {id:'n2a',n:'Abdominal no cabo, ajoelhado',s:3,r:'12–15'},{id:'n2b',n:'Elevação de pernas suspenso',s:3,r:'10–15'},{id:'n2c',n:'Prancha',s:3,r:'45–60 s'}]},
- 3:{tt:'HIIT + panturrilha',c1:'HIIT na bike: 5 min leve + 8 × (30 s forte / 90 s leve) + LISS 15 min',c2:'HIIT na bike: 5 min leve + 5 × (30 s forte / 90 s leve) + LISS 10 min',comp:[
+ 2:{tt:'LISS + abdômen (treino principal)',tipo:'liss',min:'40',maq:'esteira',comp:[]},
+ 3:{tt:'HIIT + panturrilha + core',tipo:'hiit',maq:'bike',h1:{t:8,r:90,l:15},h2:{t:5,r:90,l:10},comp:[
    {id:'n3a',n:'Panturrilha em pé, pausa de 2 s embaixo',s:4,r:'15–20'}]},
- 4:{tt:'LISS + deltoide lateral + farmer’s walk',c1:'Elíptico ou escada · LISS 40 min',c2:'Elíptico ou escada · LISS 25–30 min',comp:[
+ 4:{tt:'LISS + deltoide lateral + farmer’s walk',tipo:'liss',min:'40',maq:'eliptico',comp:[
    {id:'n4a',n:'Elevação lateral no cabo',s:3,r:'15–20'},{id:'n4b',n:'Farmer’s walk com halteres pesados',s:3,r:'30–40 m'}]},
- 5:{tt:'Bike leve + abdômen + mobilidade',c1:'Bike leve ou caminhada · 35 min',c2:'Bike leve ou caminhada · 25–30 min',comp:[
-   {id:'n5a',n:'Pallof press',s:3,r:'12 cada lado'},{id:'n5b',n:'Abdominal infra (reverse crunch)',s:3,r:'12–15'},{id:'n5c',n:'Vácuo abdominal',s:5,r:'20 s'},{id:'n5d',n:'Mobilidade de quadril',s:1,r:'10 min'}]},
- 6:{tt:'HIIT + panturrilha + trapézio',c1:'HIIT no remo ou esteira: 5 min leve + 10 × (30 s forte / 60 s leve) + LISS 10 min',c2:'HIIT no remo ou esteira: 5 min leve + 7 × (30 s forte / 60 s leve) + LISS 10 min',comp:[
+ 5:{tt:'Cardio leve + abdômen (treino principal) + mobilidade',tipo:'leve',min:'35',maq:'bike',comp:[
+   {id:'n5d',n:'Mobilidade de quadril',s:1,r:'10 min'}]},
+ 6:{tt:'HIIT + panturrilha + trapézio + core',tipo:'hiit',maq:'remo',h1:{t:10,r:60,l:10},h2:{t:7,r:60,l:10},comp:[
    {id:'n6a',n:'Panturrilha sentada',s:3,r:'15–20'},{id:'n6b',n:'Encolhimento com halteres',s:3,r:'12–15'}]},
- 0:{tt:'Livre ou caminhada',c1:'Livre, ou caminhada ao ar livre 30–45 min',c2:'Livre, ou caminhada ao ar livre 30–45 min',comp:[]}
+ 0:{tt:'Livre ou caminhada',tipo:'livre',comp:[]}
 };
 const DIETA={
  1:{nome:'Fase 1 · recomposição',quando:'até 03/01',kcal:'2.400',p:170,g:65,c:280,refs:[
@@ -539,20 +578,38 @@ function sunday(k,c){
     : `<ol class="exs">${W.R.ex.map((ex,i)=>exItem(k,c,ex,i,d.manha||{})).join('')}</ol>`;
   return `<article class="session"><header class="s-head"><p class="eyebrow">Manhã · domingo</p><h2 class="s-title"><span class="letter">R</span><span>Recuperação ativa</span></h2><p class="s-meta">${p.done}/${p.total} ${p.unit}</p><p class="rir">Domingo conta como dia de treino, mas é leve: o músculo cresce na recuperação.</p></header><div class="seg" role="group" aria-label="Opção de domingo"><button type="button" data-act="dom" data-k="${k}" data-o="A" aria-pressed="${opt==='A'}">A · Recomendada</button><button type="button" data-act="dom" data-k="${k}" data-o="B" aria-pressed="${opt==='B'}">B · Pontos fracos</button></div>${body}</article>`;
 }
+const absWeek=k=>(Math.max(0,Math.floor((dn(k)-dn(START))/7))%2===0?'A':'B');
+function cardioTxt(n,c,m){
+  const M=MAQ[m];
+  if(c.deload) return `LISS 30–40 min: ${M.liss}. Sem HIIT nesta semana.`;
+  if(n.tipo==='hiit'){const h=c.fase===2?n.h2:n.h1;return `5 min leve + ${h.t} tiros de 30 s (${M.forte}) com ${h.r} s de recuperação (${M.leve}) + LISS ${h.l} min.`;}
+  const min=c.fase===2?'25–30':n.min;
+  return n.tipo==='leve'?`${min} min leve: ${M.leve}.`:`LISS ${min} min: ${M.liss}.`;
+}
+function compRow(k,x,cc){
+  const arr=cc[x.id]||[]; let dots='';
+  for(let i=0;i<x.s;i++) dots+=`<button type="button" class="dot${arr[i]?' on':''}" data-act="dot" data-k="${k}" data-id="${x.id}" data-i="${i}" aria-pressed="${!!arr[i]}" aria-label="${esc(x.n)}, série ${i+1}">${i+1}</button>`;
+  const yt='https://www.youtube.com/results?search_query='+encodeURIComponent(x.n+' execução');
+  return `<div class="comp"><div class="comp-t"><b>${esc(x.n)}</b><small>${x.s} × ${esc(x.r)}</small>${x.t?`<p class="comp-tip">${esc(x.t)}</p>`:''}<a class="how sm" href="${yt}" target="_blank" rel="noopener">Ver execução ↗</a></div><div class="dots">${dots}</div></div>`;
+}
+const abItems=list=>list.map(([key,s])=>Object.assign({id:'ab-'+key,s},AB[key]));
 function night(k,c,wd){
   const n=N[wd], nt=dayRO(k).noite||{}, cc=nt.c||{};
-  const cardio=c.deload&&wd!==0?'Cardio leve (LISS) 30–40 min: bike, elíptico ou caminhada. Sem HIIT nesta semana.':(c.fase===2?n.c2:n.c1);
-  let comp='';
-  if(!c.deload&&n.comp.length){
-    comp=n.comp.map(x=>{
-      const arr=cc[x.id]||[]; let dots='';
-      for(let i=0;i<x.s;i++) dots+=`<button type="button" class="dot${arr[i]?' on':''}" data-act="dot" data-k="${k}" data-id="${x.id}" data-i="${i}" aria-pressed="${!!arr[i]}" aria-label="${esc(x.n)}, série ${i+1}">${i+1}</button>`;
-      return `<div class="comp"><div class="comp-t"><b>${esc(x.n)}</b><small>${x.s} × ${esc(x.r)}</small></div><div class="dots">${dots}</div></div>`;
-    }).join('');
-  } else if(c.deload&&n.comp.length) comp='<p class="note pad">Semana de deload: sem bloco complementar à noite.</p>';
-  const zones=wd===0?'':'<p class="zones">LISS: 115–135 bpm (dá para conversar) · tiro de HIIT: 160–170 bpm</p>';
-  const f2=c.fase===2&&!c.deload&&wd!==0?'<p class="note pad">Fase 2: cardio mais curto para facilitar o superávit.</p>':'';
-  return `<article class="session"><header class="s-head"><p class="eyebrow">Noite · cardio + pontos fracos</p><h2 class="s-title"><span>${esc(n.tt)}</span></h2>${zones}</header>${tog('cardio',k,'cardio','Cardio',cardio,nt.cardio)}${comp}${f2}</article>`;
+  if(n.tipo==='livre'){
+    return `<article class="session"><header class="s-head"><p class="eyebrow">Noite · domingo</p><h2 class="s-title"><span>${esc(n.tt)}</span></h2></header>${tog('cardio',k,'cardio','Caminhada (opcional)','Livre, ou caminhada ao ar livre 30–45 min.',nt.cardio)}</article>`;
+  }
+  const m=MAQ[nt.maq]?nt.maq:n.maq, M=MAQ[m];
+  const maqs=MAQ_ORD.map(id=>`<button type="button" class="maq" data-act="maq" data-k="${k}" data-m="${id}" aria-pressed="${id===m}">${MAQ[id].n}</button>`).join('');
+  let groups='';
+  if(c.deload) groups='<p class="note pad">Semana de deload: sem bloco complementar nem abdominais à noite.</p>';
+  else{
+    if(n.comp.length) groups+=`<p class="grp">Pontos fracos</p>${n.comp.map(x=>compRow(k,x,cc)).join('')}`;
+    if(ABS[wd]){const wk=absWeek(k);groups+=`<p class="grp">Abdômen · rodízio ${wk}</p><p class="grp-note">Esta semana é a ${wk}; na próxima, o app troca para a ${wk==='A'?'B':'A'}. Abdominal fortalece e marca a barriga, mas a gordura da região sai com a dieta e o cardio.</p>${abItems(ABS[wd][wk]).map(x=>compRow(k,x,cc)).join('')}`;}
+    else if(FIN[wd]) groups+=`<p class="grp">Core · finalizador curto</p>${abItems(FIN[wd]).map(x=>compRow(k,x,cc)).join('')}`;
+  }
+  const zones=n.tipo==='hiit'&&!c.deload?'<p class="zones">Tiro de HIIT: 160–170 bpm · recuperação até ~120 bpm</p>':'<p class="zones">LISS: 115–135 bpm (dá para conversar)</p>';
+  const f2=c.fase===2&&!c.deload?'<p class="note pad">Fase 2: cardio mais curto para facilitar o superávit.</p>':'';
+  return `<article class="session"><header class="s-head"><p class="eyebrow">Noite · cardio + pontos fracos</p><h2 class="s-title"><span>${esc(n.tt)}</span></h2>${zones}</header><p class="grp first">Máquina de hoje</p><div class="maqs" role="group" aria-label="Máquina de cardio">${maqs}</div>${tog('cardio',k,'cardio',`Cardio · ${M.n}`,cardioTxt(n,c,m),nt.cardio)}<p class="note pad">${esc(M.dica)}</p>${f2}${groups}</article>`;
 }
 function vHoje(){
   const k=state.sel, c=ctx(k), wd=wday(k), L=LETRA[wd];
@@ -775,6 +832,7 @@ main.addEventListener('click',e=>{
   }
   const day=getDay(k);
   if(act==='cardio'){day.noite=Object.assign({},day.noite);day.noite.cardio=!day.noite.cardio;}
+  else if(act==='maq'){day.noite=Object.assign({},day.noite);day.noite.maq=t.dataset.m;}
   else if(act==='dot'){day.noite=Object.assign({},day.noite);day.noite.c=Object.assign({},day.noite.c);const arr=(day.noite.c[t.dataset.id]||[]).slice();const i=+t.dataset.i;while(arr.length<=i)arr.push(false);arr[i]=!arr[i];day.noite.c[t.dataset.id]=arr;}
   else if(act==='meal'){day.ref=Object.assign({},day.ref);day.ref[t.dataset.id]=!day.ref[t.dataset.id];}
   else if(act==='sup'){day.sup=Object.assign({},day.sup);day.sup[t.dataset.id]=!day.sup[t.dataset.id];}
